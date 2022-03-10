@@ -12,7 +12,7 @@ module.exports = function(controller) {
   flow.addAction("simulationChoice")
   
   flow.before("simulationChoice",async(flow,bot)=>{
-    flow.gotoThread("name")
+    
     // var simulationText = "[fgtsSimulation]+++"
     // var choiceText = "[fgtsSimulation]+++"
     // if(flow.vars.simulation.length>1){
@@ -48,6 +48,13 @@ module.exports = function(controller) {
     // flow.setVar("simulationText",simulationText)
     // flow.setVar("choiceText",choiceText)
     // flow.setVar("simulationCount",flow.vars.simulation.length)
+    flow.setVar("simulationText","Banco Pan\
+                         \n  Saldo disponível para saque: R$ 1000,00\
+                         \n  Você receberá: R$ 850,00\
+                         \n  Parcelas adiantadas: 10")
+
+    flow.setVar("choiceText","O que achou da proposta? Quer contratar?")
+    flow.setVar("simulationCount",1)
   })
 
   flow.addMessage("{{vars.simulationText}}","simulationChoice")
@@ -73,7 +80,7 @@ module.exports = function(controller) {
     else if(flow.vars.simulationCount == 1){
       console.log("Uma simulação")
       if(nlu.checkAffirmative(response)){
-        var bankChoice = flow.vars.simulation[0].bank
+        var bankChoice = "Banco Pan"//flow.vars.simulation[0].bank
         flow.setVar("simulationChoice",bankChoice)
         flow.gotoThread("name")
       }

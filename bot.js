@@ -49,16 +49,10 @@ controller.ready(() => {
         await bot.beginDialog("introAtivo");
     })
 
-    controller.interrupts("RECEPTIVEFLOW","message",async(bot,message)=>{
-        await bot.cancelAllDialogs();
-        await bot.beginDialog("intro");
-    })
-
     controller.interrupts("SIGNUPFLOW","message",async(bot,message)=>{
         await bot.cancelAllDialogs();
         await bot.beginDialog("signUp");
     })
-
 
     controller.interrupts("SIMULATIONERROR","message",async(bot,message)=>{
         await bot.cancelAllDialogs();

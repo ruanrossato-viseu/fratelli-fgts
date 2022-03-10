@@ -57,13 +57,14 @@ module.exports = function(controller) {
     "cpf",
     "fgtsSimulationAgain")
 
+    flow.addMessage("[fgtsSimulation]+++Ok, só um minutinho enquanto eu pesquiso as melhores ofertas. Assim que eu acabar, chamo você.","fgtsSimulation")
     
-    flow.addQuestion("[fgtsSimulation]+++Ok, só um minutinho enquanto eu pesquiso as melhores ofertas. Assim que eu acabar, chamo você.",
-        async(response,flow,bot) => {
-            await flow.gotoThread("repeat")
-        }, 
-    "cpf",
-    "fgtsSimulation")
+    // flow.addQuestion("[fgtsSimulation]+++Ok, só um minutinho enquanto eu pesquiso as melhores ofertas. Assim que eu acabar, chamo você.",
+    //     async(response,flow,bot) => {
+    //         // await flow.gotoThread("repeat")
+    //     }, 
+    // "cpf",
+    // "fgtsSimulation")
 
     flow.addQuestion("[fgtsSimulation]+++Já estou finalizando a busca, aguarde mais um pouquinho por favor", 
         async(response,flow,bot) => {
@@ -74,6 +75,7 @@ module.exports = function(controller) {
 
     flow.after(async (response, bot) => {
         await bot.cancelAllDialogs();
+        await bot.beginDialog("signUp");
     });
 
     controller.addDialog(flow);

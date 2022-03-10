@@ -9,30 +9,12 @@ module.exports = function(controller) {
     flow.addAction("fgtsSimulation")
    
 
-    function isNumeric(num){
-        return !isNaN(num)
-    }
-
-    // flow.before("fgtsSimulation",async(flow,bot)=>{console.log(flow.vars.user)})
-
-    // Solicita CPF
-    flow.addQuestion("[fgtsSimulation]+++Para iniciarmos sua simulação, digite o seu *CPF*, por favor",
-        async(response,flow,bot) => {
-          var cpf = response
-          var cpfRegex = new RegExp(/^\d{3}( ?[.-] ?| )?\d{3}( ?[.-] ?| )?\d{3}( ?[.-] ?| )?\d{2}$/)
-            if(cpfRegex.test(cpf)) { 
-                await bot.say("[SIMULATION]+++"+cpf)
-            }
-            else {
-                await flow.gotoThread("intro")
-            }
-        }, 
-    "cpf",
-    "fgtsSimulation")
+    
 
     
     flow.addQuestion("[fgtsSimulation]+++Ok, só um minutinho enquanto eu valido seus dados.",
         async(response,flow,bot) => {
+            await bot.say("[SIMULATION]+++"+user.cpf)
             await flow.gotoThread("repeat")
         }, 
     "cpf",

@@ -4,11 +4,11 @@ module.exports = function(controller) {
     const flow = new BotkitConversation("introAtivo", controller);
     const nlu = require('../scripts/nlu.js');
     
-    flow.addAction("ativo")
+    flow.addAction("ativo");
 
-    flow.addMessage("[ATIVO]+++Olá, sou o Fratelli BOT, assistente virtual da Fratelli Promotora! Para saber mais sobre o adiantamento sobre o saque do FGTS retido diga: *Oi*.\
-    \n\n_*Se você contratar agora, em 5 horas seu dinheiro está na conta!*_",
-    "ativo")
+    flow.addMessage("[INTRO]+++Para garantir sua segurança e privacidade, seguimos as diretrizes da Lei Geral de Proteção de Dados. Para saber mais, acesse o link (LINK)",
+                "ativo");
+
     
     flow.after(async (response, bot) => {
         await bot.cancelAllDialogs();
