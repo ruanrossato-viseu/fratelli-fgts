@@ -75,7 +75,7 @@ controller.ready(() => {
         if(nlu.checkNegative(message.text)){
             await bot.say(
                 {
-                    "type":"message",
+                    "type":"buttons",
                     "section":"Subscription",
                     "body":"Agradeço sua atenção e desculpe pelo incômodo.\
                     \n\nPrecisando estou à disposição!",
