@@ -106,7 +106,7 @@ module.exports = function(controller) {
                       "section":"fgtsSimulation",
                       "body":"Consegui as seguintes condições para você:\
                       \nVocê receberá: {{vars.netValue}}\
-                      \nParcelas adiantadas: {{vars.installmentCount}}\
+                      \nParcelas adiantadas: {{vars.installmentsCount}}\
                       \nTaxa de juros: {{vars.interest}}%",
                       "footer":"O que achou dessa proposta?",
                       // "header":"",
