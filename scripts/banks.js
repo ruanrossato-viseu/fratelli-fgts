@@ -6,7 +6,7 @@ require("dotenv").config();
 
 
 
-module.exports.simulation = function simulation(cpf){
+module.exports.simulation = async function simulation(cpf){
     cpf = cpf.replace(/\D/g,'');
     cpf = cpf.substr(0, 3) + "." + str.substr(3,6)+"."+str.substr(6,9)+"-"+str.substr(9);
     var data = JSON.stringify({
