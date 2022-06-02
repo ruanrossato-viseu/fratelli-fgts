@@ -10,7 +10,7 @@ module.exports = function(controller) {
     flow.addMessage(
         {
             "type":"message",
-            "section":"Introduction",
+            "section":"introduction",
             "body":"Para garantir sua segurança e privacidade, seguimos as diretrizes da Lei Geral de Proteção de Dados", 
             "footer":"",
             "header":"",
