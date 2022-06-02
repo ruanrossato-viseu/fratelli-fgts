@@ -63,7 +63,13 @@ module.exports = function(controller) {
     "cpf",
     "getCpfAgain")
 
-    
+    flow.addMessage(
+        {
+            "type":"info",
+            "section":"cpf",
+            "body":"{{vars.cpf}}"            
+        },
+        "preSimulation");
 
     flow.addMessage(
         {
