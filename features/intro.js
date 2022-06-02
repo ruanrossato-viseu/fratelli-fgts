@@ -14,25 +14,6 @@ module.exports = function(controller) {
             "body":"Para garantir sua segurança e privacidade, seguimos as diretrizes da Lei Geral de Proteção de Dados", 
             "footer":"",
             "header":"",
-            // "buttons":[
-            //     {
-            //         "text": "",
-            //         "payload": ""
-            //     },
-            //     {
-            //         "text": "",
-            //         "payload": ""
-            //     }
-            // ],
-            
-            // "media":
-            //     {
-            //         "contentType": "image|video|document",
-            //         "mediaURL":"",
-            //         "mediaID":"",
-            //         "caption":"",
-            //         "filename":""
-            //     }
             
             },
                     "intro")
