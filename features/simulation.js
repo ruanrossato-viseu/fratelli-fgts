@@ -5,14 +5,13 @@ module.exports = function(controller) {
     const { BotkitConversation } = require("botkit");
     const flow = new BotkitConversation("simulation", controller);
     const nlu = require('../scripts/nlu.js');
+    const banks = require('../scripts/banks.js');
 
-    flow.addAction("fgtsSimulation")
+    flow.addAction("getCpf")
    
-    flow.before("fgtsSimulation", async(flow,bot)=>{
+    flow.before("getCpf", async(flow,bot)=>{
         if(flow.vars.cpf>0){
-            
-            // await bot.say("[SIMULATION]+++"+cpf)
-            await flow.gotoThread("fgtsSimulationConclusion");
+            await flow.gotoThread("preSimulation");
 
         }
     })
@@ -27,128 +26,75 @@ module.exports = function(controller) {
         {
             "type":"message",
             "section":"fgtsSimulation",
-            "body":"Para fazer sua simulação, só preciso que escreva o seu *CPF*, por favor",
-            // "footer":"",
-            // "header":"",
-      
-            // "buttons":[
-            //     {
-            //         "text": "",
-            //         "payload": ""
-            //     },
-            //     {
-            //         "text": "",
-            //         "payload": ""
-            //     }
-            // ],
-            
-            // "media":
-            //     {
-            //         "contentType": "image|video|document",
-            //         "mediaURL":"",
-            //         "mediaID":"",
-            //         "caption":"",
-            //         "filename":""
-            //     }
+            "body":"Para fazer sua simulação, só preciso que escreva o seu *CPF*, por favor"
             },
         async(response,flow,bot) => {
           var cpf = response
           var cpfRegex = new RegExp(/^\d{3}( ?[.-] ?| )?\d{3}( ?[.-] ?| )?\d{3}( ?[.-] ?| )?\d{2}$/)
             if(cpfRegex.test(cpf)) { 
                 // await bot.say("[SIMULATION]+++"+cpf)
-                await flow.gotoThread("fgtsSimulationConclusion");
+                await flow.gotoThread("preSimulation");
             }
             else {
-                await flow.gotoThread("fgtsSimulationAgain")
+                await flow.gotoThread("getCpfAgain")
             }
         }, 
     "cpf",
-    "fgtsSimulation")
+    "getCpf")
 
     flow.addQuestion(
         {
             "type":"message",
             "section":"fgtsSimulation",
             "body":"Não consegui compreender. Tente novamente digitar o seu *CPF*, por favor.\
-            \n Ex: 123.45.789-01",
-            // "footer":"",
-            // "header":"",
-      
-            // "buttons":[
-            //     {
-            //         "text": "",
-            //         "payload": ""
-            //     },
-            //     {
-            //         "text": "",
-            //         "payload": ""
-            //     }
-            // ],
-            
-            // "media":
-            //     {
-            //         "contentType": "image|video|document",
-            //         "mediaURL":"",
-            //         "mediaID":"",
-            //         "caption":"",
-            //         "filename":""
-            //     }
+            \nEx: 123.45.789-01"
             },
         async(response,flow,bot) => {
             var cpf = response
             var cpfRegex = new RegExp(/^\d{3}( ?[.-] ?| )?\d{3}( ?[.-] ?| )?\d{3}( ?[.-] ?| )?\d{2}$/)
             if(cpfRegex.test(response)) {
                 // await bot.say("[SIMULATION]+++"+cpf)
-                await flow.gotoThread("fgtsSimulationConclusion");
+                await flow.gotoThread("preSimulation");
             }
             else {
                 await bot.beginDialog("agent-transfer")
             }
         }, 
     "cpf",
-    "fgtsSimulationAgain")
+    "getCpfAgain")
 
     
+
     flow.addMessage(
         {
             "type":"message",
             "section":"fgtsSimulation",
-            "body":"Ok, só um minutinho enquanto eu pesquiso as melhores ofertas. Assim que eu acabar, chamo você.",
-            // "footer":"",
-            // "header":"",
-      
-            // "buttons":[
-            //     {
-            //         "text": "",
-            //         "payload": ""
-            //     },
-            //     {
-            //         "text": "",
-            //         "payload": ""
-            //     }
-            // ],
-            
-            // "media":
-            //     {
-            //         "contentType": "image|video|document",
-            //         "mediaURL":"",
-            //         "mediaID":"",
-            //         "caption":"",
-            //         "filename":""
-            //     }
-            },"fgtsSimulationConclusion")
+            "body":"Ok, só um minutinho enquanto eu pesquiso as melhores ofertas. Assim que eu acabar, chamo você."            
+        },
+        "preSimulation")
         
-    flow.addMessage({"type":"delay"},"fgtsSimulationConclusion")
+    // flow.addMessage({"type":"delay"},"fgtsSimulationConclusion")
 
-  
+    flow.addAction("simulationChoice","preSimulation");
+
+    flow.before("simulationChoice",async(flow,bot) =>{
+        var simulationResult = banks.simulation(flow.vars.cpf)
+        
+        
+        var netValue = Intl.NumberFormat('pt-br', {style: 'currency', currency: 'BRL'}).format(String(simulationResult.simulation[0].netValue))
+
+        flow.setVar("netValue",netValue);
+        flow.setVar("interest",simulationResult.simulation[0].interest);
+        flow.setVar("installmentsCount",simulationResult.simulation[0].installments.length);
+    });
 
   
     flow.addQuestion({"type":"buttons",
                       "section":"fgtsSimulation",
                       "body":"Consegui as seguintes condições para você:\
-                      \nVocê receberá: R$ 20.434,17\
-                      \nParcelas adiantadas: 6\
-                      \nTaxa de juros: 2.04%",
+                      \nVocê receberá: {{vars.netValue}}\
+                      \nParcelas adiantadas: {{vars.installmentCount}}\
+                      \nTaxa de juros: {{vars.interest}}%",
                       "footer":"O que achou dessa proposta?",
                       // "header":"",
   
@@ -165,22 +111,22 @@ module.exports = function(controller) {
                       
                  
                       },
-    async(response,flow,bot) => {
-      if(response=="sim"){
-        await bot.cancelAllDialogs();
-        await bot.beginDialog("signUp");
-      }
-      else{
-        await bot.say({"type":"message",
-                        "section":"fgtsSimulation",
-                        "body":"Ok, se quiser simular novamente, é só chamar",
-                        } 
-        );
-      }
+        async(response,flow,bot) => {
+        if(response=="sim"){
+            await bot.cancelAllDialogs();
+            await bot.beginDialog("signUp");
+        }
+        else{
+            await bot.say({"type":"message",
+                            "section":"fgtsSimulation",
+                            "body":"Ok, se quiser simular novamente, é só chamar",
+                            } 
+            );
+        }
 
-    }, 
-    "simulationChoice", 
-    "fgtsSimulationConclusion")
+        }, 
+        "simulationChoice", 
+        "simulationChoice")
   
     
     flow.after(async (response, bot) => {

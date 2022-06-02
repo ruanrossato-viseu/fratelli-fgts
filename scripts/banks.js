@@ -27,6 +27,8 @@ module.exports.simulation = function simulation(cpf){
     };
 
 
+    console.log(config)
+
     var simulationInfo = await axios(config)
         .then((response) => {
             console.log(JSON.stringify(response.data))
