@@ -7,16 +7,49 @@ module.exports = function(controller) {
     const nlu = require('../scripts/nlu.js');
     flow.addAction("app")
 
-    flow.addQuestion("[AppInstall]+++Para iniciarmos é necessário ter o *aplicativo do FGTS* instalado no seu celular. Você já tem instalado o app?\
-    \n\n_Responda *sim*, caso tenha lido, entendido e esteja de acordo_.\
-    \n_E se precisar voltar, digite *voltar* em qualquer momento._",
+    flow.addQuestion({
+        "type":"buttons",
+        "section":"Subscription",
+        "body":"Para iniciarmos é necessário ter o *aplicativo do FGTS* instalado no seu celular. Você já tem instalado o app?",
+        "footer":"Clique na opção desejada",
+        // "header":"",
+
+        "buttons":[
+            {
+                // "type":"text",    
+                "text": "Sim",
+                "payload": "sim"
+            },
+            {
+                // "type":"text", 
+                "text": "Não",
+                "payload": "nao"
+            }
+        ],
+
+        // "buttons":[
+        //     {
+        //         "type": "phoneNumber",
+        //         "text": "Call us",
+        //         "payload": "+5511123456789"
+        //     },
+        //     {
+        //         "type": "url",
+        //         "text": "Visite o website",
+        //         "payload": "https://smarte.rs/{{1}}"
+        //     }
+        // ],
+        
+        // "media":
+        //     {
+        //         "contentType": "image|video|document",
+        //         "mediaURL":"",
+        //         "mediaID":"",
+        //         "caption":"",
+        //         "filename":""
+        //     }
+        },
     async(response, flow, bot) =>{
-        if(nlu.checkError(response)) {
-          flow.after(async (response, bot) => {
-            await bot.cancelAllDialogs();
-            await bot.beginDialog("intro");
-          });
-        }
         response = response.toLowerCase()
         if(nlu.checkAffirmative(response)) {
         }
@@ -27,26 +60,112 @@ module.exports = function(controller) {
     "aplicativo",
     "app")
 
+    flow.addMessage(
+        {
+            "type":"message",
+            "section":"Subscription",
+            "body":"Caso você tenha um *celular Android*, acesse sua *Play Store*, localize o *App do FGTS* e instale.\
+            \nSe preferir, use o link abaixo:\
+            \n_https://play.google.com/store/apps/details?id=br.gov.caixa.fgts.trabalhador_",
+            "footer":"Clique na opção desejada",
+            // "header":"",
+    
+            // "buttons":[
+            //     {
+            //         "text": "",
+            //         "payload": ""
+            //     },
+            //     {
+            //         "text": "",
+            //         "payload": ""
+            //     }
+            // ],
+            
+            // "media":
+            //     {
+            //         "contentType": "image|video|document",
+            //         "mediaURL":"",
+            //         "mediaID":"",
+            //         "caption":"",
+            //         "filename":""
+            //     }
+            },
+            "naoInstalado")
+
+    flow.addMessage(
+        {
+            "type":"message",
+            "section":"Subscription",
+            "body":"Caso contrário, se for um *iPhone*, acesse sua *App Store*, localize o *App do FGTS* e instale.\
+            \nSe preferir, use o link abaixo:\
+            \n_https://apps.apple.com/br/app/fgts/id1038441027_",
+            "footer":"Clique na opção desejada",
+            // "header":"",
+    
+            // "buttons":[
+            //     {
+            //         "text": "",
+            //         "payload": ""
+            //     },
+            //     {
+            //         "text": "",
+            //         "payload": ""
+            //     }
+            // ],
+            
+            // "media":
+            //     {
+            //         "contentType": "image|video|document",
+            //         "mediaURL":"",
+            //         "mediaID":"",
+            //         "caption":"",
+            //         "filename":""
+            //     }
+            },
+            "naoInstalado")
 
     // Usuários com o aplicativo não instalado
-    flow.addQuestion("[AppInstall]+++Para instalar, clique em:\
-        \n\nAndroid: https://play.google.com/store/apps/details?id=br.gov.caixa.fgts.trabalhador\
-        \nApple: https://apps.apple.com/br/app/fgts/id1038441027\
-        \n\nDepois que finalizar, eu quero saber se você conseguiu instalar. *E ai conseguiu*?\
-        \n\n_Responda *sim*, caso tenha lido, entendido e esteja de acordo_.",
+    flow.addQuestion(
+        {
+            "type":"buttons",
+            "section":"Subscription",
+            "body":"Me avise aqui assim que terminar esse procedimento",
+            "footer":"Clique na opção desejada",
+            // "header":"",
+    
+            "buttons":[
+                {
+                    "text": "Consegui!",
+                    "payload": "sim"
+                },
+                {
+                    "text": "Preciso de ajuda",
+                    "payload": "nao"
+                }
+            ],
+            
+            // "media":
+            //     {
+            //         "contentType": "image|video|document",
+            //         "mediaURL":"",
+            //         "mediaID":"",
+            //         "caption":"",
+            //         "filename":""
+            //     }
+            },
     async(response, flow, bot) =>{
         response = response.toLowerCase()
-        if(nlu.checkError(response)) {
-          await flow.gotoThread("app")
-        }
         if(nlu.checkAffirmative(response)) {
-       }
-       else {
-          await bot.beginDialog("agent-transfer")
-       }
+        }
+        else {
+            await bot.cancelAllDialogs()
+            await bot.beginDialog("agent-transfer")
+        }
     },
     "aplicativo",
     "naoInstalado")
+
+
     
         
     flow.after(async (response, bot) => {

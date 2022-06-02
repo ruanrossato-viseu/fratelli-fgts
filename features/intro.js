@@ -6,24 +6,90 @@ module.exports = function(controller) {
     
     flow.addAction("intro")
 
-    flow.addMessage("[INTRO]+++Pronto! Em poucos minutos eu te ajudarei a verificar o valor do seu FGTS retido, para isso temos que seguir alguns passos.",
+
+    flow.addMessage(
+        {
+            "type":"message",
+            "section":"Introduction",
+            "body":"Para garantir sua segurança e privacidade, seguimos as diretrizes da Lei Geral de Proteção de Dados", 
+            "footer":"",
+            "header":"",
+            // "buttons":[
+            //     {
+            //         "text": "",
+            //         "payload": ""
+            //     },
+            //     {
+            //         "text": "",
+            //         "payload": ""
+            //     }
+            // ],
+            
+            // "media":
+            //     {
+            //         "contentType": "image|video|document",
+            //         "mediaURL":"",
+            //         "mediaID":"",
+            //         "caption":"",
+            //         "filename":""
+            //     }
+            
+            },
                     "intro")
 
-    flow.addMessage("[INTRO]+++Para garantir sua segurança e privacidade, seguimos as diretrizes da Lei Geral de Proteção de Dados. Para saber mais, acesse o link (LINK)", 
-                    "intro")
-
+    // flow.addQuestion(
+    //     {
+    //         "type":"buttons",
+    //         "section":"Subscription",
+    //         "body":"O que você deseja fazer hoje?",
+    //         "footer":"Clique na opção desejada",
+    //         // "header":"",
     
-    // flow.addMessage({
-    //     text: "teste",
-    //     channelData: {
-    //         mediaUrl: 'https://i.imgur.com/9n3qoKx.png',
-    //     },
+    //         "buttons":[
+    //             {
+    //                 "text": "Consignado",
+    //                 "payload": "1"
+    //             },
+    //             {
+    //                 "text": "Adiantamento de FGTS",
+    //                 "payload": "2"
+    //             },
+    //             {
+    //                 "text": "Refinanciamento",
+    //                 "payload": "3"
+    //             }
+    //         ]
+            
+    //         // "media":
+    //         //     {
+    //         //         "contentType": "image|video|document",
+    //         //         "mediaURL":"",
+    //         //         "mediaID":"",
+    //         //         "caption":"",
+    //         //         "filename":""
+    //         //     }
+    //         },
+    //     async(response, flow, bot) =>{
+            
+    //         if(response=="1"){                        
+    //             await bot.cancelAllDialogs();
+    //             await bot.beginDialog("consignado");
+    //         }
+    //         if(response=="2"){                        
+    //             await bot.cancelAllDialogs();
+    //             await bot.beginDialog("app-install");
+    //         }
+    //         if(response=="3"){                        
+    //             await bot.cancelAllDialogs();
+    //             await bot.beginDialog("refin");
+    //         }
     // },
+    // "intro",
     // "intro")
-    
     
 
     flow.after(async (response, bot) => {
+                
         await bot.cancelAllDialogs();
         await bot.beginDialog("app-install");
     });

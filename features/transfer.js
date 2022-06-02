@@ -5,9 +5,36 @@ module.exports = function(controller) {
     const flow = new BotkitConversation("agent-transfer", controller);
 
     flow.addAction("transbordo")
-    flow.addMessage("[transferToAgent]++Vou encaminhar para um de nossos especialistas para ajudar, logo tudo será resolvido. Por favor, espero um pouquinho.",
+    flow.addMessage(
+        {
+            "type":"message",
+"section":"Subscription",
+            "body":"Um de nossos especialistas irá lhe ajudar em alguns instantes. É só esperar um pouquinho",
+            // "footer":"",
+            // "header":"",
+      
+            // "buttons":[
+            //     {
+            //         "text": "",
+            //         "payload": ""
+            //     },
+            //     {
+            //         "text": "",
+            //         "payload": ""
+            //     }
+            // ],
+            
+            // "media":
+            //     {
+            //         "contentType": "image|video|document",
+            //         "mediaURL":"",
+            //         "mediaID":"",
+            //         "caption":"",
+            //         "filename":""
+            //     }
+            },
                     "transbordo")
-    // flow.addMessage("[TRANSFER]++[Transferência]")
+                    
     flow.after(async (results, bot) => {
         await bot.cancelAllDialogs();
     });

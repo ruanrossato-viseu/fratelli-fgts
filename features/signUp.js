@@ -9,126 +9,75 @@ module.exports = function(controller) {
     return !isNaN(num)
   }
 
-  flow.addAction("simulationChoice")
-  
-  flow.before("simulationChoice",async(flow,bot)=>{
-    
-    // var simulationText = "[fgtsSimulation]+++"
-    // var choiceText = "[fgtsSimulation]+++"
-    // if(flow.vars.simulation.length>1){
-    //   console.log("Mais de uma simulação")
-    //   simulationText+="Confira as melhores opções para você:\n"
-    //   for(var index = 0;index<flow.vars.simulation.length;index++){
-    //     var simulation = flow.vars.simulation[index]
-        
-    //     simulationText += `\n[${index+1}] ${simulation.bank}\
-    //                     \n  Saldo disponível para saque: R$ ${simulation['simulation']['balance']}\
-    //                     \n  Você receberá: R$ ${simulation['simulation']['value']}\
-    //                     \n  Parcelas adiantadas: ${simulation['simulation']['installments']}\n`
-    //   }
-    //   choiceText += "Qual das opções preferiu? _Digite o número do lado do nome do banco que quer contratar_"
-    // }
+  flow.addAction("name")
+  flow.addQuestion(
+    {
+      "type":"message",
+"section":"Subscription",
+      "body":"Ótima escolha! Para concluir, precisamos anotar algumas informações. É bem rapidinho 😉\
+      \n\nPara começar, preciso do seu *nome completo*",
+      // "footer":"",
+      // "header":"",
 
-    // else if (flow.vars.simulation.length==1){
-    //   console.log("Uma simulação")
-    //   simulationText+='Consegui a seguinte proposta para você:\n';
-    //   var simulation = flow.vars.simulation[0]
-    //   simulationText += `\n${simulation.bank}\
-    //                     \n  Saldo disponível para saque: R$ ${simulation['simulation']['balance']}\
-    //                     \n  Você receberá: R$ ${simulation['simulation']['value']}\
-    //                     \n  Parcelas adiantadas: ${simulation['simulation']['installments']}\n`
-    //   choiceText += "O que achou da proposta? Quer contratar?"
-    // }
-
-    // else{
-    //   console.log("Nenhuma simulação")
-    //   simulationText+='Infelizmente, não encontramos ofertas para você nesse momento.';      
-    //   choiceText += "Gostaria de tentar novamente?"
-    // }
-    // flow.setVar("simulationText",simulationText)
-    // flow.setVar("choiceText",choiceText)
-    // flow.setVar("simulationCount",flow.vars.simulation.length)
-    flow.setVar("simulationText","Banco Pan\
-                         \n  Saldo disponível para saque: R$ 1000,00\
-                         \n  Você receberá: R$ 850,00\
-                         \n  Parcelas adiantadas: 10")
-
-    flow.setVar("choiceText","O que achou da proposta? Quer contratar?")
-    flow.setVar("simulationCount",1)
-  })
-
-  flow.addMessage("{{vars.simulationText}}","simulationChoice")
-
-  
-  flow.addQuestion("{{vars.choiceText}}",
-  async(response,flow,bot) => {
-    console.log(flow.vars.simulation)
-    console.log(flow.vars.simulationCount)
-    console.log(response)
-    if(flow.vars.simulationCount == 0){
-      console.log("Nenhuma simulação")
-      if(nlu.checkAffirmative(response)){
-        await bot.cancelAllDialogs();
-        await bot.beginDialog("simulationError");
-      }
-      else{
-        await bot.say("[fgtsSimulation]+++Ok, se quiser tentar novamente, é só chamar")
-        await bot.say("[FINISH]+++[Sem simulação]")
-        await bot.cancelAllDialogs();
-      }
-    }
-    else if(flow.vars.simulationCount == 1){
-      console.log("Uma simulação")
-      if(nlu.checkAffirmative(response)){
-        var bankChoice = "Banco Pan"//flow.vars.simulation[0].bank
-        flow.setVar("simulationChoice",bankChoice)
-        flow.gotoThread("name")
-      }
-      else{
-        await bot.say("[fgtsSimulation]+++Ok, se quiser simular novamente, é só chamar")
-        await bot.say("[FINISH]+++[Sem simulação]")
-        await bot.cancelAllDialogs();
-      }
-    }
-    else if(flow.vars.simulationCount > 1){
-      console.log("Mais de uma simulação")
-      if(parseInt(response)>0 && parseInt(response)<=flow.vars.simulationCount){
-        var bankChoice = flow.vars.simulation[parseInt(response)].bank
-        flow.setVar("simulationChoice",bankChoice)
-        flow.gotoThread("name")
-      }
-      else if(nlu.checkNegative(response)){
-        await bot.say("[fgtsSimulation]+++Ok, se quiser simular novamente, é só chamar")
-        await bot.say("[FINISH]+++[Sem simulação]")
-        await bot.cancelAllDialogs();
-      }
-      else{
-        await bot.say("[fgtsSimulation]+++Essa opção não é válida. Por favor, digite um _número entre 1 e "+flow.vars.simulationCount+"_")
-        await flow.repeat()
-      }
-    }
-  }, 
-  "simulationChoice", 
-  "simulationChoice")
-
-  
-  flow.addQuestion("[signUp]+++Ótima escolha! Para concluir, precisamos anotar algumas informações. É bem rapidinho\
-  \n\nPara começar, preciso do seu *nome completo*",
-    async(response,flow,bot) => {
+      // "buttons":[
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     },
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     }
+      // ],
+      
+      // "media":
+      //     {
+      //         "contentType": "image|video|document",
+      //         "mediaURL":"",
+      //         "mediaID":"",
+      //         "caption":"",
+      //         "filename":""
+      //     }
+      },
+    async(response,flow,bot) => {  
       flow.setVar("gender",nlu.checkGender(response))  
+        
       await flow.gotoThread("documents")
     }, 
   "name", 
   "name")
 
   
-  flow.addQuestion("[signUp]+++E agora preciso do *número do seu RG*\
-  \n\n _Lembrando que se precisar voltar, basta digitar *voltar* em qualquer momento_.",
+  flow.addQuestion(
+    {
+      "type":"message",
+      "section":"Subscription",
+      "body":"E agora preciso do número do seu *RG*",
+      // "footer":"",
+      // "header":"",
+
+      // "buttons":[
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     },
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     }
+      // ],
+      
+      // "media":
+      //     {
+      //         "contentType": "image|video|document",
+      //         "mediaURL":"",
+      //         "mediaID":"",
+      //         "caption":"",
+      //         "filename":""
+      //     }
+      },
     async(response,flow,bot) => {
       var regexRg = new RegExp(/(^\d{1,2}).?(\d{3}).?(\d{3})-?(\d{1}|X|x$)/)
-      if(nlu.checkError(response)) {
-        await flow.gotoThread("name")
-      }
       if(regexRg.test(response)) {
         await flow.gotoThread("motherName")
       }
@@ -139,13 +88,37 @@ module.exports = function(controller) {
   "id", 
   "documents")
 
-  flow.addQuestion("[signUp]+++Desculpe, eu não entendi! Para avançarmos preciso que informe o *número do RG*.\
-  \n\nPode ser nesse formato para RG: 12.123.123-4",
+  flow.addQuestion(
+    {
+      "type":"message",
+"section":"Subscription",
+      "body":"Desculpe, eu não entendi! Para avançarmos preciso que informe o número do *RG *.\
+      \n\nPode ser nesse formato para RG: 12.123.123-4",
+      // "footer":"",
+      // "header":"",
+
+      // "buttons":[
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     },
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     }
+      // ],
+      
+      // "media":
+      //     {
+      //         "contentType": "image|video|document",
+      //         "mediaURL":"",
+      //         "mediaID":"",
+      //         "caption":"",
+      //         "filename":""
+      //     }
+      },
   async(response,flow,bot) => {
       var regexRg = new RegExp(/(^\d{1,2}).?(\d{3}).?(\d{3})-?(\d{1}|X|x$)/)
-      if(nlu.checkError(response)) {
-        await flow.gotoThread("name")
-      }
       if(regexRg.test(response)) {
           await flow.gotoThread("motherName")
       }
@@ -155,16 +128,45 @@ module.exports = function(controller) {
   }, 
   "id", 
   "documentsAgain")
+
+
   
 // ----
 
   // Solicita nome da mãe
-  flow.addQuestion("[signUp]+++Ok, agora o *nome completo da sua mãe*, por favor",    
+  flow.addQuestion(
+    {
+      "type":"message",
+"section":"Subscription",
+      "body":"Ok, agora o *nome completo da sua mãe*, por favor",
+      // "footer":"",
+      // "header":"",
+
+      // "buttons":[
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     },
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     }
+      // ],
+      
+      // "media":
+      //     {
+      //         "contentType": "image|video|document",
+      //         "mediaURL":"",
+      //         "mediaID":"",
+      //         "caption":"",
+      //         "filename":""
+      //     }
+      },
   async(response,flow,bot) => {
-    if(nlu.checkError(response)) {
-      await flow.gotoThread("documents")
-    }
-    if(flow.vars.gender == "M" || flow.vars.gender == "F" ){
+    // if(nlu.checkErro(response)){
+    //   await flow.gotoThread("documents")
+    // }
+    if(flow.vars.gender == "M" ||flow.vars.gender == "F" ){
       flow.gotoThread("address")
     }
     else{
@@ -178,13 +180,35 @@ module.exports = function(controller) {
 // ----
 
   // Solicita gênero
-  flow.addQuestion("[signUp]+++E com qual *gênero* você se identifica?\
-  \n[1] - Feminino\
-  \n[2] - Masculino",    
+  flow.addQuestion(
+    {
+      "type":"buttons",
+      "section":"Subscription",
+      "body":"E com qual gênero você se identifica?",   
+      "footer":"Escolha o gênero",
+      // "header":"",
+
+      "buttons":[
+          {
+              "text": "Feminino",
+              "payload": "1"
+          },
+          {
+              "text": "Masculino",
+              "payload": "2"
+          }
+      ],
+      
+      // "media":
+      //     {
+      //         "contentType": "image|video|document",
+      //         "mediaURL":"",
+      //         "mediaID":"",
+      //         "caption":"",
+      //         "filename":""
+      //     }
+      },
   async(response,flow,bot) => {
-    if(nlu.checkError(response)) {
-      await flow.gotoThread("motherName")
-    }
     response = response.toLowerCase()
     if(response.includes("1")||response.includes("feminino")||response.includes("mulher")){
       flow.setVar("gender","F")
@@ -202,11 +226,35 @@ module.exports = function(controller) {
   "gender")
   
 
-  flow.addQuestion("[signUp]+++Essa opção não é válida. Digite *1 para Feminino* ou *2 para Masculino*",    
+  flow.addQuestion(
+    {
+      "type":"message",
+"section":"Subscription",
+      "body":"Essa opção não é válida. Digite *1 para Feminino* ou *2 para Masculino*",   
+      // "footer":"",
+      // "header":"",
+
+      // "buttons":[
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     },
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     }
+      // ],
+      
+      // "media":
+      //     {
+      //         "contentType": "image|video|document",
+      //         "mediaURL":"",
+      //         "mediaID":"",
+      //         "caption":"",
+      //         "filename":""
+      //     }
+      }, 
   async(response,flow,bot) => {
-    if(nlu.checkError(response)) {
-      await flow.gotoThread("motherName")
-    }
     response = response.toLowerCase()
     if(response.includes("1")||response.includes("feminino")||response.includes("mulher")){
       flow.setVar("gender","F")
@@ -226,7 +274,34 @@ module.exports = function(controller) {
 // -------
 
   // Solicita CEP
-  flow.addQuestion("[signUp]+++Para cadastrar seu endereço, vou precisar do seu *CEP*, por favor:", 
+  flow.addQuestion(
+    {
+      "type":"message",
+      "section":"Subscription",
+      "body":"Para cadastrar seu endereço, vou precisar do seu *CEP*, por favor:", 
+      // "footer":"",
+      // "header":"",
+
+      // "buttons":[
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     },
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     }
+      // ],
+      
+      // "media":
+      //     {
+      //         "contentType": "image|video|document",
+      //         "mediaURL":"",
+      //         "mediaID":"",
+      //         "caption":"",
+      //         "filename":""
+      //     }
+      },
   async(response,flow,bot) => {
       // var regexCEP = new RegExp(/\d{2}( ?[.-] ?| )?\d{3}( ?[.-] ?| )?[\d]{3}$/)
       // if (regexCEP.test(response)) {
@@ -235,9 +310,7 @@ module.exports = function(controller) {
       // else {
       //     await flow.gotoThread("addressAgain")
       // }
-      if(nlu.checkError(response)) {
-        await flow.gotoThread("gender")
-      }
+
       var address = await cep.checkCEP(response)
       if(address){
         if(address.logradouro != ""){
@@ -260,8 +333,35 @@ module.exports = function(controller) {
   "cep",
   "address")
 
-  flow.addQuestion("[signUp]+++Ops, esse CEP não foi válido. Vamos tentar de novo.\
-  \n\n Escreva seu *CEP* no formato: 01234-567",
+  flow.addQuestion(
+    {
+      "type":"message",
+      "section":"Subscription",
+      "body":"Ops, esse CEP não foi válido. Vamos tentar de novo.\
+      \n\n Escreva seu *CEP* no formato: 01234-567",
+      // "footer":"",
+      // "header":"",
+
+      // "buttons":[
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     },
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     }
+      // ],
+      
+      // "media":
+      //     {
+      //         "contentType": "image|video|document",
+      //         "mediaURL":"",
+      //         "mediaID":"",
+      //         "caption":"",
+      //         "filename":""
+      //     }
+      },
   async(response,flow,bot) => {
       // var regexCEP = new RegExp(/\d{2}( ?[.-] ?| )?\d{3}( ?[.-] ?| )?[\d]{3}$/)
       // if (regexCEP.test(response)) {
@@ -270,9 +370,6 @@ module.exports = function(controller) {
       // else {
       //     await bot.beginDialog("agent-transfer")
       // }
-      if(nlu.checkError(response)) {
-        await flow.gotoThread("gender")
-      }
       var address = cep.checkCEP(response)
       
       if(address){
@@ -299,29 +396,73 @@ module.exports = function(controller) {
 // -----
 
   // Solicita logradouro da casa
-  flow.addQuestion("[signUp]+++Obrigada. Agora preciso do *endereço* desse CEP", 
+  flow.addQuestion(
+    {
+      "type":"message",
+"section":"Subscription",
+      "body":"Obrigada. Agora preciso do *endereço* desse CEP", 
+        // "footer":"",
+        // "header":"",
+
+        // "buttons":[
+        //     {
+        //         "text": "",
+        //         "payload": ""
+        //     },
+        //     {
+        //         "text": "",
+        //         "payload": ""
+        //     }
+        // ],
+        
+        // "media":
+        //     {
+        //         "contentType": "image|video|document",
+        //         "mediaURL":"",
+        //         "mediaID":"",
+        //         "caption":"",
+        //         "filename":""
+        //     }
+      },
   async(response,flow,bot) => {
-    if(nlu.checkError(response)) {
-      await flow.gotoThread("address")
-    }
-    else{
-      await flow.gotoThread("addressNumber")
-    }
+        await flow.gotoThread("addressNumber")
   }, 
   "addressStreet",
   "addressStreet")
 // -----
 
   // Solicita número da casa
-  flow.addQuestion("[signUp]+++Identifiquei o seguinte endereço: {{vars.addressStreet}}, {{vars.addressNeighbourhood}} na cidade de {{vars.addressCity}}-{{vars.addressState}}.\
-  \nAgora me diga o *número* do imóvel?", 
+  flow.addQuestion(
+    {
+      "type":"message",
+      "section":"Subscription",
+      "body":"Identifiquei o seguinte endereço: {{vars.addressStreet}}, {{vars.addressNeighbourhood}} na cidade de {{vars.addressCity}}-{{vars.addressState}}.\
+      \nAgora me diga o *número* do imóvel?", 
+      // "footer":"",
+      // "header":"",
+
+      // "buttons":[
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     },
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     }
+      // ],
+      
+      // "media":
+      //     {
+      //         "contentType": "image|video|document",
+      //         "mediaURL":"",
+      //         "mediaID":"",
+      //         "caption":"",
+      //         "filename":""
+      //     }
+      },
   async(response,flow,bot) => {
-    if(nlu.checkError(response)) {
-      await flow.gotoThread("addressStreet")
-    }
-    else{
-      await flow.gotoThread("dadosBanco")
-    }
+        await flow.gotoThread("dadosBanco")
       
       
   }, 
@@ -330,21 +471,47 @@ module.exports = function(controller) {
 
 
 
-
   // Solicita o nome do banco
-  flow.addQuestion("[signUp]+++Para finalizar, preciso dos seus *dados bancários*\
-  \n\n Sua conta é em qual banco?_Digite o número do lado do banco_\
-  \n[1] Itau\
-  \n[2] Santander\
-  \n[3] Bradesco\
-  \n[4] Banco do Brasil\
-  \n[5] Caixa\
-  \n[6] Nubank\
-  \n[7] Outros",
+  flow.addQuestion(
+    {
+      "type":"message",
+"section":"Subscription",
+      "body":"Para finalizar, preciso dos seus *dados bancários*\
+      \n\n Sua conta é em qual banco?_Digite o número do lado do banco_\
+      \n[1] Itau\
+      \n[2] Santander\
+      \n[3] Bradesco\
+      \n[4] Banco do Brasil\
+      \n[5] Caixa\
+      \n[6] Nubank\
+      \n[7] Outros",
+      // "footer":"",
+      // "header":"",
+
+      // "buttons":[
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     },
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     }
+      // ],
+      
+      // "media":
+      //     {
+      //         "contentType": "image|video|document",
+      //         "mediaURL":"",
+      //         "mediaID":"",
+      //         "caption":"",
+      //         "filename":""
+      //     }
+      },
   async(response,flow,bot) => {
-    if(nlu.checkError(response)) {
-      await flow.gotoThread("addressNumber")
-    }
+    // if(nlu.checkError(response)) {
+    //   await flow.gotoThread("addressNumber")
+    // }
       if (response == "1") {
         flow.setVar("banco","341")
         await flow.gotoThread("agencia")
@@ -370,7 +537,6 @@ module.exports = function(controller) {
         await flow.gotoThread("agencia")
       }
       else if (response == "7") {
-        flow.setVar("banco","Outros")
         await flow.gotoThread("qualBanco")
       }
       else {
@@ -380,19 +546,46 @@ module.exports = function(controller) {
   "banco",
   "dadosBanco")
 
-  flow.addQuestion("[signUp]+++Não entendi. Preciso que você me informe a *conta bancária* que quer receber o benefício do FGTS.\
-  \n\n Sua conta é em qual banco?\
-  \n[1] Itau\
-  \n[2] Santander\
-  \n[3] Bradesco\
-  \n[4] Banco do Brasil\
-  \n[5] Caixa\
-  \n[6] Nubank\
-  \n[7] Outros",
+  flow.addQuestion(
+    {
+      "type":"message",
+"section":"Subscription",
+      "body":"Não entendi. Preciso que você me informe a *conta bancária* que quer receber o benefício do FGTS.\
+      \n\n Sua conta é em qual banco?\
+      \n[1] Itau\
+      \n[2] Santander\
+      \n[3] Bradesco\
+      \n[4] Banco do Brasil\
+      \n[5] Caixa\
+      \n[6] Nubank\
+      \n[7] Outros",
+      // "footer":"",
+      // "header":"",
+
+      // "buttons":[
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     },
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     }
+      // ],
+      
+      // "media":
+      //     {
+      //         "contentType": "image|video|document",
+      //         "mediaURL":"",
+      //         "mediaID":"",
+      //         "caption":"",
+      //         "filename":""
+      //     }
+      },
   async(response,flow,bot) => {
-     if(nlu.checkError(response)) {
-      await flow.gotoThread("addressNumber")
-    }
+    //  if(nlu.checkError(response)) {
+    //   await flow.gotoThread("addressNumber")
+    // }
       if (response == "1") {
         flow.setVar("banco","341")
         await flow.gotoThread("agencia")
@@ -418,7 +611,6 @@ module.exports = function(controller) {
         await flow.gotoThread("agencia")
       }
       else if (response == "7") {
-        flow.setVar("banco","Outros")
         await flow.gotoThread("qualBanco")
       }
       else {
@@ -428,12 +620,40 @@ module.exports = function(controller) {
   "banco",
   "dadosBancoAgain")
 
-  flow.addQuestion("[signUp]+++Certo, e qual o *código do seu banco*?\
-  \n \nCaso não saiba o código, consulte o link abaixo:\
-  \nhttps://www.conta-corrente.com/codigo-dos-bancos/",
+  flow.addQuestion(
+    {
+      "type":"message",
+      "section":"Subscription",
+      "body":"Certo, e qual o *código do seu banco*?\
+      \n \nCaso não saiba o código, consulte o link abaixo:\
+      \nhttps://www.conta-corrente.com/codigo-dos-bancos/",
+      // "footer":"",
+      // "header":"",
+
+      // "buttons":[
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     },
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     }
+      // ],
+      
+      // "media":
+      //     {
+      //         "contentType": "image|video|document",
+      //         "mediaURL":"",
+      //         "mediaID":"",
+      //         "caption":"",
+      //         "filename":""
+      //     }
+      },
   async(response,flow,bot) => {
     var regexCodigo = new RegExp(/[0-9]{3}/)
     if(regexCodigo.test(response)) {
+      flow.setVar("banco",response)
       await flow.gotoThread("agencia")
     }
     else {
@@ -443,12 +663,40 @@ module.exports = function(controller) {
   "codigoBanco",
   "qualBanco")
 
-  flow.addQuestion("[signUp]+++Hmm, não entendi, qual é o *código do seu banco*?\
-  \n_Digite apenas o código do seu banco_\
-  \nEx: *655*",
+  flow.addQuestion(
+    {
+      "type":"message",
+"section":"Subscription",
+      "body":"Hmm, não entendi, qual é o *código do seu banco*?\
+      \n_Digite apenas o código do seu banco_\
+      \nEx: *655*",
+      // "footer":"",
+      // "header":"",
+
+      // "buttons":[
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     },
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     }
+      // ],
+      
+      // "media":
+      //     {
+      //         "contentType": "image|video|document",
+      //         "mediaURL":"",
+      //         "mediaID":"",
+      //         "caption":"",
+      //         "filename":""
+      //     }
+      },
   async(response,flow,bot) => {
     var regexCodigo = new RegExp(/[0-9]{3}/)
     if(regexCodigo.test(response)) {
+      flow.setVar("banco",response)
       await flow.gotoThread("agencia")
     }
     else {
@@ -457,84 +705,156 @@ module.exports = function(controller) {
   },
   "codigoBanco",
   "qualBancoAgain")
-
   // ------
 
-  //Solicita a agência
-  flow.addQuestion("[signUp]+++Me passa o número da sua *agência*?",
+  // Solicita a agência
+  flow.addQuestion(
+    {
+      "type":"message",
+"section":"Subscription",
+      "body":"Me passa o número da sua *agência*?",
+      // "footer":"",
+      // "header":"",
+
+      // "buttons":[
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     },
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     }
+      // ],
+      
+      // "media":
+      //     {
+      //         "contentType": "image|video|document",
+      //         "mediaURL":"",
+      //         "mediaID":"",
+      //         "caption":"",
+      //         "filename":""
+      //     }
+      },
   async(response,flow,bot) => {
-    if(nlu.checkError(response)) {
-      await flow.gotoThread("dadosBanco")
-    }
-    else{
-      await flow.gotoThread("cc")
-    }
+        await flow.gotoThread("cc")
       
   },
   "agencia",
   "agencia")
 
- // ----
+  // ----
 
   
 
   // Solicita a conta
-  flow.addQuestion("[signUp]+++E agora o número da *conta corrente*\
-  \n*Obs:* Precisa conter o dígito no final",
+  flow.addQuestion(
+    {
+      "type":"message",
+"section":"Subscription",
+      "body":"E agora o número da *conta corrente*\
+      \n*Obs:*Se houver, não coloque o dígito",
+      // "footer":"",
+      // "header":"",
+
+      // "buttons":[
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     },
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     }
+      // ],
+      
+      // "media":
+      //     {
+      //         "contentType": "image|video|document",
+      //         "mediaURL":"",
+      //         "mediaID":"",
+      //         "caption":"",
+      //         "filename":""
+      //     }
+      },
   async(response,flow,bot) => {
-    if(nlu.checkError(response)) {
-      await flow.gotoThread("agencia")
-    }
-    else{
-      await flow.gotoThread("finalizacao")
-    }
+      await flow.gotoThread("ccDigit")
      
   },
   "conta",
   "cc")
 
+  // Solicita a conta
+  flow.addQuestion(
+    {
+      "type":"message",
+"section":"Subscription",
+      "body":"Para acabar, me passa o *dígito da sua conta corrente*\
+      \n*Obs:*Se não tiver dígito, é só escrever 0",
+      // "footer":"",
+      // "header":"",
+
+      // "buttons":[
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     },
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     }
+      // ],
+      
+      // "media":
+      //     {
+      //         "contentType": "image|video|document",
+      //         "mediaURL":"",
+      //         "mediaID":"",
+      //         "caption":"",
+      //         "filename":""
+      //     }
+      },
+  async(response,flow,bot) => {
+      await flow.gotoThread("finalizacao")
+     
+  },
+  "ccDigit",
+  "ccDigit")
+
 
 
 
   // Finaliza bot
-  flow.addMessage("[ending]+++Pronto! Sua requisição foi *enviada com sucesso*!\
-  \n\n *Siga nesse link para concluir a formalização*: (LINK WHATSAPP). É só seguir por lá!",
-"finalizacao")
+  flow.addMessage(
+    {
+      "type":"message",
+"section":"Subscription",
+      "body":"Pronto! Sua requisição foi enviada com sucesso!\
+      \n\nPara concluir a formalização e enviar os documentos, é só entrar nesse site do banco: www.linkbanco.com.br", 
+      // "footer":"",
+      // "header":"",
 
-flow.addAction("nota","finalizacao")
-
-flow.addQuestion("[ending]+++Informe uma nota de *0 a 10*, quão satisfeito você ficou em relação ao nosso atendimento:",
-  async(response,flow,bot) => {
-    if(nlu.checkError(response)) {
-      await flow.gotoThread("finalizacao")
-    }
-    if(nlu.checkRate(response)) {
-      await flow.gotoThread("despedida")
-    }
-    else {
-        await bot.beginDialog("notaAgain")
-    }
-},
-"nota",
-"nota")
-
-flow.addQuestion("[ending]+++Não consegui compreender, pode tentar de novo? De *0 a 10*, que *nota* você daria para o nosso serviço?",
-  async(response,flow,bot) => {
-    if(nlu.checkError(response)) {
-      await flow.gotoThread("finalizacao")
-    }
-    if(nlu.checkRate(response)) {
-      await flow.gotoThread("despedida")
-    }
-    else {
-        await bot.beginDialog("agent-transfer")
-    }
-},
-"nota",
-"notaAgain")
-
-flow.addMessage("[ending]+++Tudo bem, obrigado! Até mais.",
-"despedida")
+      // "buttons":[
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     },
+      //     {
+      //         "text": "",
+      //         "payload": ""
+      //     }
+      // ],
+      
+      // "media":
+      //     {
+      //         "contentType": "image|video|document",
+      //         "mediaURL":"",
+      //         "mediaID":"",
+      //         "caption":"",
+      //         "filename":""
+      //     }
+      },
+  "finalizacao")
 
 
   flow.after(async (results, bot) => {
@@ -547,20 +867,19 @@ flow.addMessage("[ending]+++Tudo bem, obrigado! Até mais.",
         "mother_name": results["motherName"],
         "phoneNumber": results["user"],
         "zip_code": results["cep"],
-        "address_street": results[""],
-        "address_number": results[""],
+        "address_street": results["addressStreet"],
+        "address_number": results["addressNumber"],
         "address_additional": results[""],
-        "address_neigbourhood": results[""],
-        "address_city":results[""],
-        "address_state":results[""],
-        "bank_number": results[""],
-        "bank_agency_number": results[""],
-        "bank_account_number": results[""],
-        "bank_account_last_digit": results[""],
-        "bank_account_type": results[""]
+        "address_neigbourhood": results["addressNeighbourhood"],
+        "address_city":results["addressCity"],
+        "address_state":results["addressState"],
+        "bank_number": results["banco"],
+        "bank_agency_number": results["agencia"],
+        "bank_account_number": results["conta"],
+        "bank_account_last_digit": results["ccDigit"],
+        "bank_account_type": "CORRENTE"
       }
-      await bot.say("[SIGNUPINFO]+++"+dadosUsuario)
-      await bot.say("[FINISH]+++[Encerramento Padrão]")
+      
       await bot.cancelAllDialogs();
   });
   controller.addDialog(flow);

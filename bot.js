@@ -39,20 +39,31 @@ controller.ready(() => {
     // load traditional developer-created local custom feature modules
     controller.loadModules(__dirname + '/features');
 
-    controller.interrupts("Sair" || "encerrar" || "cancelar" || "interromper" || "parar" || "cancela" || "para" || "sai" || "eliminiar" || "anular" || "não receber" , "message", async (bot, message) => {
-        await bot.reply(message, "Até a próxima");
+    controller.interrupts("PARAR" , "message", async (bot, message) => {
+        await bot.say( {
+            "type":"message",
+            "section":"stop",
+            "body":"Até a próxima! Se precisar, é só chamar." 
+            });
+        console.log("Encerramento")
         await bot.cancelAllDialogs();
     });
- 
-    controller.interrupts("ACTIVEFLOW","message",async(bot,message)=>{
-        await bot.cancelAllDialogs();
-        await bot.beginDialog("introAtivo");
-    })
 
     controller.interrupts("SIGNUPFLOW","message",async(bot,message)=>{
-        await bot.cancelAllDialogs();
-        await bot.beginDialog("signUp");
+        try{
+            console.log(message.incoming_message.channelData.simulation)
+            
+            await bot.cancelAllDialogs();
+            
+            await bot.beginDialog("signUp",{"simulation":message.incoming_message.channelData.simulation});
+        }
+        catch{
+            await bot.cancelAllDialogs();
+            
+            await bot.beginDialog("simulationError");
+        }
     })
+
 
     controller.interrupts("SIMULATIONERROR","message",async(bot,message)=>{
         await bot.cancelAllDialogs();
@@ -60,10 +71,43 @@ controller.ready(() => {
     })
 
     controller.on("message", async (bot,message) => {  
-        
-        console.log("inicio")  
-        await bot.beginDialog("inicio",{
-        });
+        const nlu = require('./scripts/nlu.js');
+        if(nlu.checkNegative(message.text)){
+            await bot.say(
+                {
+                    "type":"message",
+                    "section":"Subscription",
+                    "body":"Agradeço sua atenção e desculpe pelo incômodo.\
+                    \n\nPrecisando estou à disposição!",
+                    "footer":"Aperte no botão abaixo",
+                    "header":"Caso mude de ideia",
+              
+                    "buttons":[
+                        {
+                            "text": "Quero simular",
+                            "payload": "simulacao"
+                        },
+                        {
+                            "text": "Agora não",
+                            "payload": "nao"
+                        }
+                    ],
+                    
+                    "media":
+                        {
+                            "contentType": "image|video|document",
+                            "mediaURL":"",
+                            "mediaID":"",
+                            "caption":"",
+                            "filename":""
+                        }
+                    },)
+        }
+        else{
+            console.log("inicio")  
+            await bot.beginDialog("inicio",{})
+        }
+
     });
 
 });
