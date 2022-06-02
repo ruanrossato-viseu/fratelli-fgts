@@ -8,7 +8,7 @@ require("dotenv").config();
 
 module.exports.simulation = async function simulation(cpf){
     cpf = cpf.replace(/\D/g,'');
-    cpf = cpf.substr(0, 3) + "." + str.substr(3,6)+"."+str.substr(6,9)+"-"+str.substr(9);
+    cpf = cpf.substr(0, 3) + "." + cpf.substr(3,6)+"."+cpf.substr(6,9)+"-"+cpf.substr(9);
     var data = JSON.stringify({
         "cpf": cpf,
         "source": "chatbot",
