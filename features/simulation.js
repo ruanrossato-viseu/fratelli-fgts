@@ -90,9 +90,8 @@ module.exports = function(controller) {
             await bot.cancelAllDialogs();
             await bot.beginDialog("signUp");
         }
-        else{
-
-            
+        else{           
+            await bot.say({"type":"info","section":"simulation","body":simulationResult})
             var netValue = Intl.NumberFormat('pt-br', {style: 'currency', currency: 'BRL'}).format(String(simulationResult.simulation[0].netValue))
 
             flow.setVar("netValue",netValue);
