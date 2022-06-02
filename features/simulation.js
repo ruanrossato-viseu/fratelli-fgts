@@ -84,7 +84,7 @@ module.exports = function(controller) {
     flow.addAction("simulationChoice","preSimulation");
 
     flow.before("simulationChoice",async(flow,bot) =>{
-        var simulationResult = banks.simulation(flow.vars.cpf)
+        var simulationResult = await banks.simulation(flow.vars.cpf)
         if(!simulationResult){
             await bot.say({"type":"message","section":"fgtsSimulation","body":"Não foi possível fazer a simulação agora"})
             await bot.cancelAllDialogs();
