@@ -71,13 +71,13 @@ module.exports = function(controller) {
         },
         "preSimulation");
 
-    flow.addMessage(
-        {
-            "type":"message",
-            "section":"fgtsSimulation",
-            "body":"Ok, só um minutinho enquanto eu pesquiso as melhores ofertas. Assim que eu acabar, chamo você."            
-        },
-        "preSimulation")
+    // flow.addMessage(
+    //     {
+    //         "type":"message",
+    //         "section":"fgtsSimulation",
+    //         "body":"Ok, só um minutinho enquanto eu pesquiso as melhores ofertas. Assim que eu acabar, chamo você."            
+    //     },
+    //     "preSimulation")
         
     // flow.addMessage({"type":"delay"},"fgtsSimulationConclusion")
 
