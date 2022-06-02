@@ -85,13 +85,20 @@ module.exports = function(controller) {
 
     flow.before("simulationChoice",async(flow,bot) =>{
         var simulationResult = banks.simulation(flow.vars.cpf)
-        
-        
-        var netValue = Intl.NumberFormat('pt-br', {style: 'currency', currency: 'BRL'}).format(String(simulationResult.simulation[0].netValue))
+        if(!simulationResult){
+            await bot.say({"type":"message","section":"fgtsSimulation","body":"Não foi possível fazer a simulação agora"})
+            await bot.cancelAllDialogs();
+            await bot.beginDialog("signUp");
+        }
+        else{
 
-        flow.setVar("netValue",netValue);
-        flow.setVar("interest",simulationResult.simulation[0].interest);
-        flow.setVar("installmentsCount",simulationResult.simulation[0].installments.length);
+            
+            var netValue = Intl.NumberFormat('pt-br', {style: 'currency', currency: 'BRL'}).format(String(simulationResult.simulation[0].netValue))
+
+            flow.setVar("netValue",netValue);
+            flow.setVar("interest",simulationResult.simulation[0].interest);
+            flow.setVar("installmentsCount",simulationResult.simulation[0].installments.length);
+        }
     });
 
   
