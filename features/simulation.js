@@ -1,6 +1,6 @@
 const { MongoDbStorage } = require("botbuilder-storage-mongodb");
 
-module.exports = function(controller) {
+module.exports = function (controller) {
 
     const { BotkitConversation } = require("botkit");
     const flow = new BotkitConversation("simulation", controller);
@@ -8,14 +8,14 @@ module.exports = function(controller) {
     const banks = require('../scripts/banks.js');
 
     flow.addAction("getCpf")
-   
-    flow.before("getCpf", async(flow,bot)=>{
-        if(flow.vars.cpf>0){
+
+    flow.before("getCpf", async (flow, bot) => {
+        if (flow.vars.cpf > 0) {
             await flow.gotoThread("preSimulation");
 
         }
     })
-    function isNumeric(num){
+    function isNumeric(num) {
         return !isNaN(num)
     }
 
@@ -24,50 +24,50 @@ module.exports = function(controller) {
     // Solicita CPF
     flow.addQuestion(
         {
-            "type":"message",
-            "section":"fgtsSimulation",
-            "body":"Para fazer sua simulação, só preciso que escreva o seu *CPF*, por favor"
-            },
-        async(response,flow,bot) => {
-          var cpf = response
-          var cpfRegex = new RegExp(/^\d{3}( ?[.-] ?| )?\d{3}( ?[.-] ?| )?\d{3}( ?[.-] ?| )?\d{2}$/)
-            if(cpfRegex.test(cpf)) { 
+            "type": "message",
+            "section": "fgtsSimulation",
+            "body": "Para fazer sua simulação, só preciso que escreva o seu *CPF*, por favor"
+        },
+        async (response, flow, bot) => {
+            var cpf = response
+            var cpfRegex = new RegExp(/^\d{3}( ?[.-] ?| )?\d{3}( ?[.-] ?| )?\d{3}( ?[.-] ?| )?\d{2}$/)
+            if (cpfRegex.test(cpf)) {
                 // await bot.say("[SIMULATION]+++"+cpf)
                 await flow.gotoThread("preSimulation");
             }
             else {
                 await flow.gotoThread("getCpfAgain")
             }
-        }, 
-    "cpf",
-    "getCpf")
+        },
+        "cpf",
+        "getCpf")
 
     flow.addQuestion(
         {
-            "type":"message",
-            "section":"fgtsSimulation",
-            "body":"Não consegui compreender. Tente novamente digitar o seu *CPF*, por favor.\
+            "type": "message",
+            "section": "fgtsSimulation",
+            "body": "Não consegui compreender. Tente novamente digitar o seu *CPF*, por favor.\
             \nEx: 123.45.789-01"
-            },
-        async(response,flow,bot) => {
+        },
+        async (response, flow, bot) => {
             var cpf = response
             var cpfRegex = new RegExp(/^\d{3}( ?[.-] ?| )?\d{3}( ?[.-] ?| )?\d{3}( ?[.-] ?| )?\d{2}$/)
-            if(cpfRegex.test(response)) {
+            if (cpfRegex.test(response)) {
                 // await bot.say("[SIMULATION]+++"+cpf)
                 await flow.gotoThread("preSimulation");
             }
             else {
                 await bot.beginDialog("agent-transfer")
             }
-        }, 
-    "cpf",
-    "getCpfAgain")
+        },
+        "cpf",
+        "getCpfAgain")
 
     flow.addMessage(
         {
-            "type":"info",
-            "section":"cpf",
-            "body":"{{vars.cpf}}"            
+            "type": "info",
+            "section": "cpf",
+            "body": "{{vars.cpf}}"
         },
         "preSimulation");
 
@@ -78,72 +78,77 @@ module.exports = function(controller) {
     //         "body":"Ok, só um minutinho enquanto eu pesquiso as melhores ofertas. Assim que eu acabar, chamo você."            
     //     },
     //     "preSimulation")
-        
+
     // flow.addMessage({"type":"delay"},"fgtsSimulationConclusion")
 
-    flow.addAction("simulationChoice","preSimulation");
+    flow.addAction("simulationChoice", "preSimulation");
 
-    flow.before("simulationChoice",async(flow,bot) =>{
+    flow.before("simulationChoice", async (flow, bot) => {
         var simulationResult = await banks.simulation(flow.vars.cpf)
-        if(!simulationResult){
-            await bot.say({"type":"message","section":"fgtsSimulation","body":"Não foi possível fazer a simulação agora"})
+        if (!simulationResult) {
+            await bot.say({ "type": "message", "section": "fgtsSimulation", "body": "Não foi possível fazer a simulação agora" })
             await bot.cancelAllDialogs();
             await bot.beginDialog("signUp");
         }
-        else{           
-            await bot.say({"type":"message", "text":{"type":"info","section":"simulation","body":simulationResult}})
-            var netValue = Intl.NumberFormat('pt-br', {style: 'currency', currency: 'BRL'}).format(String(simulationResult.simulation[0].netValue))
+        else {
+            await bot.say({ "type": "message", "text": { "type": "info", "section": "simulation", "body": simulationResult } })
+            var netValue = Intl.NumberFormat('pt-br', { style: 'currency', currency: 'BRL' }).format(String(simulationResult.simulation[0].netValue))
 
-            flow.setVar("netValue",netValue);
-            flow.setVar("interest",simulationResult.simulation[0].interest);
-            flow.setVar("installmentsCount",simulationResult.simulation[0].installments.length);
+            flow.setVar("netValue", netValue);
+            flow.setVar("interest", simulationResult.simulation[0].interest);
+            flow.setVar("installmentsCount", simulationResult.simulation[0].installments.length);
         }
     });
 
-  
-    flow.addQuestion({"type":"buttons",
-                      "section":"fgtsSimulation",
-                      "body":"Consegui as seguintes condições para você:\
+
+    flow.addQuestion({
+        "type": "buttons",
+        "section": "fgtsSimulation",
+        "body": "Consegui as seguintes condições para você:\
                       \nVocê receberá: {{vars.netValue}}\
                       \nParcelas adiantadas: {{vars.installmentsCount}}\
                       \nTaxa de juros: {{vars.interest}}%",
-                      "footer":"O que achou dessa proposta?",
-                      // "header":"",
-  
-                      "buttons":[
-                          {
-                              "text": "Quero contratar!",
-                              "payload": "sim"
-                          },
-                          {
-                              "text": "Agora não",
-                              "payload": "nao"
-                          }
-                      ],
-                      
-                 
-                      },
-        async(response,flow,bot) => {
-        if(response=="sim"){
-            await bot.cancelAllDialogs();
-            await bot.beginDialog("signUp");
-        }
-        else{
-            await bot.say({"type":"message",
-                            "section":"fgtsSimulation",
-                            "body":"Ok, se quiser simular novamente, é só chamar",
-                            } 
-            );
-        }
+        "footer": "O que achou dessa proposta?",
+        // "header":"",
 
-        }, 
-        "simulationChoice", 
+        "buttons": [
+            {
+                "text": "Quero contratar!",
+                "payload": "sim"
+            },
+            {
+                "text": "Agora não",
+                "payload": "nao"
+            }
+        ],
+
+
+    },
+        async (response, flow, bot) => {
+            if (response == "sim") {
+                await bot.cancelAllDialogs();
+                await bot.beginDialog("signUp");
+            }
+            else {
+                await bot.say({
+                    "type": "message",
+                    "text": {
+                        "type": "message",
+                        "section": "fgtsSimulation",
+                        "body": "Ok, se quiser simular novamente, é só chamar"
+                    }
+                }
+                );
+            }
+
+        },
+        "simulationChoice",
         "simulationChoice")
-  
-    
+
+
     flow.after(async (response, bot) => {
-            await bot.cancelAllDialogs();
-        }
+        await bot.cancelAllDialogs();
+    }
     )
     controller.addDialog(flow);
 };

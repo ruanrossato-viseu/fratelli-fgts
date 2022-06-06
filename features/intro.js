@@ -1,22 +1,22 @@
 
-module.exports = function(controller) {
+module.exports = function (controller) {
 
     const { BotkitConversation } = require("botkit");
     const flow = new BotkitConversation("inicio", controller);
-    
+
     flow.addAction("intro")
 
 
     flow.addMessage(
         {
-            "type":"message",
-            "section":"introduction",
-            "body":"Para garantir sua segurança e privacidade, seguimos as diretrizes da Lei Geral de Proteção de Dados", 
-            "footer":"",
-            "header":"",
-            
-            },
-                    "intro")
+            "type": "message",
+            "section": "introduction",
+            "body": "Para garantir sua segurança e privacidade, seguimos as diretrizes da Lei Geral de Proteção de Dados",
+            "footer": "",
+            "header": "",
+
+        },
+        "intro")
 
     // flow.addQuestion(
     //     {
@@ -25,7 +25,7 @@ module.exports = function(controller) {
     //         "body":"O que você deseja fazer hoje?",
     //         "footer":"Clique na opção desejada",
     //         // "header":"",
-    
+
     //         "buttons":[
     //             {
     //                 "text": "Consignado",
@@ -40,7 +40,7 @@ module.exports = function(controller) {
     //                 "payload": "3"
     //             }
     //         ]
-            
+
     //         // "media":
     //         //     {
     //         //         "contentType": "image|video|document",
@@ -51,7 +51,7 @@ module.exports = function(controller) {
     //         //     }
     //         },
     //     async(response, flow, bot) =>{
-            
+
     //         if(response=="1"){                        
     //             await bot.cancelAllDialogs();
     //             await bot.beginDialog("consignado");
@@ -67,10 +67,10 @@ module.exports = function(controller) {
     // },
     // "intro",
     // "intro")
-    
+
 
     flow.after(async (response, bot) => {
-                
+
         await bot.cancelAllDialogs();
         await bot.beginDialog("app-install");
     });

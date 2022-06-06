@@ -1,33 +1,33 @@
 
-module.exports = function(controller) {
+module.exports = function (controller) {
 
     const { BotkitConversation } = require("botkit");
     const flow = new BotkitConversation("app-subscription", controller);
     const nlu = require('../scripts/nlu.js');
 
     flow.addAction("subscription")
-    flow.before("subscription",async(flow,bot)=>{
-        try{
-            if(flow.vars.step=="autorizacaoBanco"){
+    flow.before("subscription", async (flow, bot) => {
+        try {
+            if (flow.vars.step == "autorizacaoBanco") {
                 await flow.gotoThread("subscriptionFgts")
             }
         }
-        catch{
-                
+        catch {
+
         }
     });
 
     flow.addMessage({
-        "type":"message",
-        "section":"subscription",
-        "body":"Ótimo! Agora, vou precisar que você autorize o saque-aniversário dentro do aplicativo FGTS. Faça o cadastro no aplicativo, e depois é só optar pelo saque-aniversário"           
-        },
+        "type": "message",
+        "section": "subscription",
+        "body": "Ótimo! Agora, vou precisar que você autorize o saque-aniversário dentro do aplicativo FGTS. Faça o cadastro no aplicativo, e depois é só optar pelo saque-aniversário"
+    },
         "subscription")
 
     flow.addMessage({
-        "type":"message",
-        "section":"subscription",
-        "body":"1 - Abra o aplicativo do FGTS\
+        "type": "message",
+        "section": "subscription",
+        "body": "1 - Abra o aplicativo do FGTS\
         \n2 - Aperta no botão Entrar no aplicativo\
         \n3 - Digite seu CPF e marque a caixinha Não sou um robô\
         \n4 - Informe sua senha e aperte em entrar\
@@ -35,17 +35,17 @@ module.exports = function(controller) {
         \n6 - Leia as cláusulas e aceite\
         \n5 - Selecione a opção Saque Aniversário do FGTS\
         \n6 - Leia com atenção os termos de adesão e aceite\
-        \n7 - Escolha a Modalidade saque aniversário"           
-        },
+        \n7 - Escolha a Modalidade saque aniversário"
+    },
         "subscription")
-    
+
     flow.addQuestion({
-        "type":"buttons",
-        "section":"subscription",
-        "body":"Quando acabar, me chama para continuarmos.",
-        "footer":"Clique na opção desejada",
-        
-        "buttons":[
+        "type": "buttons",
+        "section": "subscription",
+        "body": "Quando acabar, me chama para continuarmos.",
+        "footer": "Clique na opção desejada",
+
+        "buttons": [
             {
                 "text": "Acabei",
                 "payload": "sim"
@@ -55,21 +55,21 @@ module.exports = function(controller) {
                 "payload": "nao"
             }
         ]
-        },
-        async(response,flow,bot) => {
-            
+    },
+        async (response, flow, bot) => {
+
         },
         "inscricaoSaqueAniversario",
         "subscription")
 
     flow.addQuestion({
-        "type":"buttons",
-        "section":"subscription",
-        "body":"Deu certo?",
-        "footer":"Clique na opção desejada",
+        "type": "buttons",
+        "section": "subscription",
+        "body": "Deu certo?",
+        "footer": "Clique na opção desejada",
         // "header":"",
 
-        "buttons":[
+        "buttons": [
             {
                 "text": "Sim",
                 "payload": "sim"
@@ -79,28 +79,28 @@ module.exports = function(controller) {
                 "payload": "nao"
             }
         ]
-        },
-        async(response,flow,bot) => {
-            if(nlu.checkAffirmative(response)) {
-            await flow.gotoThread("subscriptionFgts")
+    },
+        async (response, flow, bot) => {
+            if (nlu.checkAffirmative(response)) {
+                await flow.gotoThread("subscriptionFgts")
             }
             else {
                 await flow.gotoThread("subscriptionAgain")
             }
-    },
-    "inscricaoSaqueAniversario",
-    "subscription")
+        },
+        "inscricaoSaqueAniversario",
+        "subscription")
 
     flow.addQuestion(
         {
-            "type":"buttons",
-            "section":"subscription",
-            "body":"Se preferir temos um passo a passo em vídeo, *basta clicar no link:* https://youtu.be/tuXPnjnu33Q \
+            "type": "buttons",
+            "section": "subscription",
+            "body": "Se preferir temos um passo a passo em vídeo, *basta clicar no link:* https://youtu.be/tuXPnjnu33Q \
             \n\nDepois que finalizar, me avisa se deu certo, por favor.",
-            "footer":"Clique na opção desejada",
+            "footer": "Clique na opção desejada",
             // "header":"",
-    
-            "buttons":[
+
+            "buttons": [
                 {
                     "text": "Acabei",
                     "payload": "sim"
@@ -110,50 +110,50 @@ module.exports = function(controller) {
                     "payload": "nao"
                 }
             ]
-            
-          
-            },
-    async(response,flow,bot) => {
-        if(nlu.checkAffirmative(response)) {
-          await flow.gotoThread("subscriptionFgts")
-        }
-        else {
-            await bot.beginDialog("agent-transfer")
-        }
-    },
-    "inscricaoSaqueAniversario",
-    "subscriptionAgain")
+
+
+        },
+        async (response, flow, bot) => {
+            if (nlu.checkAffirmative(response)) {
+                await flow.gotoThread("subscriptionFgts")
+            }
+            else {
+                await bot.beginDialog("agent-transfer")
+            }
+        },
+        "inscricaoSaqueAniversario",
+        "subscriptionAgain")
 
     flow.addMessage({
-        "type":"message",
-        "section":"subscription",
-        "body":"Certo, estamos quase no fim! Agora, por favor *autorize o _Banco Pan_ a consultar o seu FGTS* dentro do app do FGTS.\
-        \nSe tiver alguma dúvida, também tenho um passo-a-passo explicando:"           
-        },
+        "type": "message",
+        "section": "subscription",
+        "body": "Certo, estamos quase no fim! Agora, por favor *autorize o _Banco Pan_ a consultar o seu FGTS* dentro do app do FGTS.\
+        \nSe tiver alguma dúvida, também tenho um passo-a-passo explicando:"
+    },
         "subscriptionFgts")
 
-     flow.addMessage({
-        "type":"message",
-        "section":"subscription",
-        "body":"1 - Abra o aplicativo do FGTS\
+    flow.addMessage({
+        "type": "message",
+        "section": "subscription",
+        "body": "1 - Abra o aplicativo do FGTS\
         \n2 - Aperta no botão *Entrar no aplicativo*\
         \n3 - Digite seu CPF e marque a caixinha *Não sou um robô*\
         \n4 - Informe sua senha e aperte em *entrar*\
         \n5 - Na tela inicial, seleciona a opção *autorizar bancos a consultarem seu FGTS*\
         \n6 - Selecione a opção *empréstimo saque aniversário*\
         \n7 - Selecione o *Banco Pan*\
-        \n8 - Confirme no botão *Confirmar seleção*"           
-        },
+        \n8 - Confirme no botão *Confirmar seleção*"
+    },
         "subscriptionFgts")
     flow.addQuestion(
         {
-            "type":"buttons",
-            "section":"subscription",
-            "body":"Deu certo?",
-            "footer":"Clique na opção desejada",
+            "type": "buttons",
+            "section": "subscription",
+            "body": "Deu certo?",
+            "footer": "Clique na opção desejada",
             // "header":"",
-    
-            "buttons":[
+
+            "buttons": [
                 {
                     "text": "Sim",
                     "payload": "sim"
@@ -163,27 +163,27 @@ module.exports = function(controller) {
                     "payload": "nao"
                 }
             ]
-            },
-    async(response,flow,bot) => {
-        if(nlu.checkAffirmative(response)) {
-        }
-        else {
-            await flow.gotoThread("subscriptionFgtsAgain")
-        }
-    },
-    "inscricaoConsultarFgts",
-    "subscriptionFgts")
-    
+        },
+        async (response, flow, bot) => {
+            if (nlu.checkAffirmative(response)) {
+            }
+            else {
+                await flow.gotoThread("subscriptionFgtsAgain")
+            }
+        },
+        "inscricaoConsultarFgts",
+        "subscriptionFgts")
+
     flow.addQuestion(
         {
-            "type":"buttons",
-            "section":"subscription",
-            "body":"Então dê uma olhada no *passo-a-passo em vídeo* nesse link aqui: _https://youtu.be/B1GFwRNnI9U_ \
+            "type": "buttons",
+            "section": "subscription",
+            "body": "Então dê uma olhada no *passo-a-passo em vídeo* nesse link aqui: _https://youtu.be/B1GFwRNnI9U_ \
             \n\nDepois que finalizar, *me avisa aqui*, por favor",
-            "footer":"Deu certo?",
+            "footer": "Deu certo?",
             // "header":"",
-    
-            "buttons":[
+
+            "buttons": [
                 {
                     "text": "Consegui",
                     "payload": "Sim"
@@ -193,7 +193,7 @@ module.exports = function(controller) {
                     "payload": "nao"
                 }
             ],
-            
+
             // "media":
             //     {
             //         "contentType": "image|video|document",
@@ -202,21 +202,21 @@ module.exports = function(controller) {
             //         "caption":"",
             //         "filename":""
             //     }
-            },
-    async(response,flow,bot) => {
-        if(nlu.checkAffirmative(response)) {
-        }
-        else {
-            await bot.beginDialog("agent-transfer")
-        }
-    },
-    "inscricaoConsultarFgts",
-    "subscriptionFgtsAgain")
+        },
+        async (response, flow, bot) => {
+            if (nlu.checkAffirmative(response)) {
+            }
+            else {
+                await bot.beginDialog("agent-transfer")
+            }
+        },
+        "inscricaoConsultarFgts",
+        "subscriptionFgtsAgain")
 
 
     flow.after(async (vars, bot) => {
         await bot.cancelAllDialogs();
-        await bot.beginDialog("simulation",{"cpf":vars.cpf});
+        await bot.beginDialog("simulation", { "cpf": vars.cpf });
     });
 
     controller.addDialog(flow);
