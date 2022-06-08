@@ -19,7 +19,7 @@ module.exports = function(controller) {
             "section":"Subscription",
             "body":"Se quiser tentar novamente, é só clicar no botão abaixo",
             "footer": "Clique na opção desejada",
-            "header":"",
+            // "header":"",
       
             "buttons":[
                 {
