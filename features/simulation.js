@@ -87,7 +87,7 @@ module.exports = function (controller) {
         var simulationResult = await banks.simulation(flow.vars.cpf)
 
         console.log(simulationResult)
-        
+
         if (!simulationResult) {
             await bot.say({
                 "type": "message",
@@ -177,7 +177,7 @@ module.exports = function (controller) {
 
     flow.after(async (vars, bot) => {
         await bot.cancelAllDialogs();
-        console.log(flow)
+        
         if (vars.error ) {
 
             await bot.beginDialog("simulationError");
