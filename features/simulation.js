@@ -87,13 +87,14 @@ module.exports = function (controller) {
         var simulationResult = await banks.simulation(flow.vars.cpf)
         console.log(simulationResult)
         if (!simulationResult) {
-            await bot.say({ 
-                            "type": "message", 
-                            "text": { 
-                                "type": "message", 
-                                "section": "fgtsSimulation", 
-                                "body": "Não foi possível fazer a simulação agora." } 
-                            })
+            await bot.say({
+                "type": "message",
+                "text": {
+                    "type": "message",
+                    "section": "fgtsSimulation",
+                    "body": "Não foi possível fazer a simulação agora."
+                }
+            })
             await bot.cancelAllDialogs();
             await bot.beginDialog("simulationError");
         }
@@ -107,13 +108,15 @@ module.exports = function (controller) {
                 flow.setVar("installmentsCount", simulationResult.simulation[0].installments.length);
             }
             else {
-                await bot.say({ 
-                            "type": "message", 
-                            "text": { 
-                                "type": "message", 
-                                "section": "fgtsSimulation", 
-                                "body": "Não foi possível fazer a simulação agora" } 
-                            })
+                await bot.say({
+                    "type": "message",
+                    "text": {
+                        "type": "message",
+                        "section": "fgtsSimulation",
+                        "body": "Não foi possível fazer a simulação agora"
+                    }
+                })
+                await flow.stop()
                 await bot.cancelAllDialogs();
                 await bot.beginDialog("simulationError");
             }
@@ -125,9 +128,9 @@ module.exports = function (controller) {
         "type": "buttons",
         "section": "fgtsSimulation",
         "body": "Consegui as seguintes condições para você:\
-                      \nVocê receberá: {{vars.netValue}}\
-                      \nParcelas adiantadas: {{vars.installmentsCount}}\
-                      \nTaxa de juros: {{vars.interest}}%",
+                        \nVocê receberá: {{vars.netValue}}\
+                        \nParcelas adiantadas: {{vars.installmentsCount}}\
+                        \nTaxa de juros: {{vars.interest}}%",
         "footer": "O que achou dessa proposta?",
         // "header":"",
 
@@ -140,10 +143,9 @@ module.exports = function (controller) {
                 "text": "Agora não",
                 "payload": "nao"
             }
-        ],
-
-
+        ]
     },
+
         async (response, flow, bot) => {
             if (response == "sim") {
                 await bot.cancelAllDialogs();
@@ -167,8 +169,8 @@ module.exports = function (controller) {
 
 
     flow.after(async (response, bot) => {
-        await bot.cancelAllDialogs();
-    }
+            await bot.cancelAllDialogs();
+        }
     )
     controller.addDialog(flow);
 };
