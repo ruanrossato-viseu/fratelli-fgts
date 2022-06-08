@@ -85,6 +85,7 @@ module.exports = function (controller) {
 
     flow.before("simulationChoice", async (flow, bot) => {
         var simulationResult = await banks.simulation(flow.vars.cpf)
+        console.elog(simulationResult)
         if (!simulationResult) {
             await bot.say({ 
                             "type": "message", 
