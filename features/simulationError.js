@@ -19,7 +19,7 @@ module.exports = function(controller) {
     flow.addQuestion(
         {
             "type":"message",
-"section":"Subscription",
+            "section":"Subscription",
             "body":"[fgtsSimulation]+++Se quiser tentar novamente, me passe seu *CPF completo*",
             "footer":"",
             "header":"",

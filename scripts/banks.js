@@ -31,7 +31,7 @@ module.exports.simulation = async function simulation(cpf){
 
     var simulationInfo = await axios(config)
         .then((response) => {
-            console.log(JSON.stringify(response.data))
+            console.log((response.data))
             return(response.data)
         })
         .catch( function(error){

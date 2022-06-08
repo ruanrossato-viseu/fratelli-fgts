@@ -86,17 +86,36 @@ module.exports = function (controller) {
     flow.before("simulationChoice", async (flow, bot) => {
         var simulationResult = await banks.simulation(flow.vars.cpf)
         if (!simulationResult) {
-            await bot.say({ "type": "message", "section": "fgtsSimulation", "body": "Não foi possível fazer a simulação agora" })
+            await bot.say({ 
+                            "type": "message", 
+                            "text": { 
+                                "type": "message", 
+                                "section": "fgtsSimulation", 
+                                "body": "Não foi possível fazer a simulação agora" } 
+                            })
             await bot.cancelAllDialogs();
-            await bot.beginDialog("signUp");
+            await bot.beginDialog("simulationError");
         }
         else {
-            await bot.say({ "type": "message", "text": { "type": "info", "section": "simulation", "body": simulationResult } })
-            var netValue = Intl.NumberFormat('pt-br', { style: 'currency', currency: 'BRL' }).format(String(simulationResult.simulation[0].netValue))
+            if (simulationResult.simulation[0].success) {
+                await bot.say({ "type": "message", "text": { "type": "info", "section": "simulation", "body": simulationResult } })
+                var netValue = Intl.NumberFormat('pt-br', { style: 'currency', currency: 'BRL' }).format(String(simulationResult.simulation[0].netValue))
 
-            flow.setVar("netValue", netValue);
-            flow.setVar("interest", simulationResult.simulation[0].interest);
-            flow.setVar("installmentsCount", simulationResult.simulation[0].installments.length);
+                flow.setVar("netValue", netValue);
+                flow.setVar("interest", simulationResult.simulation[0].interest);
+                flow.setVar("installmentsCount", simulationResult.simulation[0].installments.length);
+            }
+            else {
+                await bot.say({ 
+                            "type": "message", 
+                            "text": { 
+                                "type": "message", 
+                                "section": "fgtsSimulation", 
+                                "body": "Não foi possível fazer a simulação agora" } 
+                            })
+                await bot.cancelAllDialogs();
+                await bot.beginDialog("simulationError");
+            }
         }
     });
 
