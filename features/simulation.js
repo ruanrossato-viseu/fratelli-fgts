@@ -6,7 +6,7 @@ module.exports = function (controller) {
     const flow = new BotkitConversation("simulation", controller);
     const nlu = require('../scripts/nlu.js');
     const banks = require('../scripts/banks.js');
-    var error = False
+    var error = false
     flow.addAction("getCpf")
 
     flow.before("getCpf", async (flow, bot) => {
