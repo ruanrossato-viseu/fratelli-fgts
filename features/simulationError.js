@@ -31,13 +31,14 @@ module.exports = function(controller) {
         },
         async(response,flow,bot) => {
           if(response == "tentar_novamente"){
-            await bot.cancelAllDialogs();
-            await bot.beginDialog("app-subscription");
+              console.log("tentar novamente")
+            // await bot.cancelAllDialogs();
+            // await bot.beginDialog("app-subscription");
           }   
           else{
-              
-            await bot.cancelAllDialogs();
-            await bot.beginDialog("agent-transfer");
+            console.log("transferencia")
+            // await bot.cancelAllDialogs();
+            // await bot.beginDialog("agent-transfer");
           }       
         }, 
     "cpf",
