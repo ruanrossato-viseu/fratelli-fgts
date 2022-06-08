@@ -72,8 +72,8 @@ module.exports = function (controller) {
     flow.after(async (response, bot) => {
 
         await bot.cancelAllDialogs();
-        // await bot.beginDialog("app-install");
-        await bot.beginDialog("simulation");
+        await bot.beginDialog("app-install");
+        // await bot.beginDialog("simulation");
     });
     controller.addDialog(flow);
 };
