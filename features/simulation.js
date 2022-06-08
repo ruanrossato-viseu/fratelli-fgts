@@ -117,7 +117,6 @@ module.exports = function (controller) {
                     }
                 })
                 await flow.stop()
-                await bot.cancelAllDialogs();
                 await bot.beginDialog("simulationError");
             }
         }
