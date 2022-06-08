@@ -84,6 +84,8 @@ module.exports = function (controller) {
     flow.addAction("simulationChoice", "preSimulation");
 
     flow.before("simulationChoice", async (flow, bot) => {
+        console.log(flow)
+        
         var simulationResult = await banks.simulation(flow.vars.cpf)
         console.log(simulationResult)
         if (!simulationResult) {
@@ -116,8 +118,11 @@ module.exports = function (controller) {
                         "body": "Não foi possível fazer a simulação agora"
                     }
                 })
+                console.log("1")
                 await flow.stop()
+                console.log("2")
                 await bot.beginDialog("simulationError");
+                console.log("3")
             }
         }
     });
