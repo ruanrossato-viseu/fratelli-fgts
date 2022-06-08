@@ -73,7 +73,7 @@ module.exports = function (controller) {
 
         await bot.cancelAllDialogs();
         // await bot.beginDialog("app-install");
-        await bot.beginDialog("simultion");
+        await bot.beginDialog("simulation");
     });
     controller.addDialog(flow);
 };
