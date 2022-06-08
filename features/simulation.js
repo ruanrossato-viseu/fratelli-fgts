@@ -85,7 +85,7 @@ module.exports = function (controller) {
 
     flow.before("simulationChoice", async (flow, bot) => {
         console.log(flow)
-        
+
         var simulationResult = await banks.simulation(flow.vars.cpf)
         console.log(simulationResult)
         if (!simulationResult) {
@@ -97,8 +97,8 @@ module.exports = function (controller) {
                     "body": "Não foi possível fazer a simulação agora."
                 }
             })
-            await bot.cancelAllDialogs();
-            await bot.beginDialog("simulationError");
+            await flow.setVar("error", true)
+            await flow.gotoThread("error")
         }
         else {
             if (simulationResult.simulation[0].success) {
@@ -118,11 +118,8 @@ module.exports = function (controller) {
                         "body": "Não foi possível fazer a simulação agora"
                     }
                 })
-                console.log("1")
-                // await flow.stop()
-                console.log("2")
-                await bot.beginDialog("simulationError");
-                console.log("3")
+                await flow.setVar("error", true)
+                await flow.gotoThread("error")
             }
         }
     });
@@ -171,10 +168,23 @@ module.exports = function (controller) {
         "simulationChoice",
         "simulationChoice")
 
+    flow.addMessage(
+        {
+            "type": "info",
+            "section": "error",
+            "body": "error"
+        },
+        "error");
 
-    flow.after(async (response, bot) => {
-            await bot.cancelAllDialogs();
+    flow.after(async (flow, bot) => {
+        await bot.cancelAllDialogs();
+        console.log(flow.vars.error)
+        if (flow.vars.error) {
+
+            await bot.beginDialog("simulationError");
         }
+
+    }
     )
     controller.addDialog(flow);
 };
