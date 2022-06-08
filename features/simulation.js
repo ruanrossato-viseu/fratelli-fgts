@@ -6,7 +6,7 @@ module.exports = function (controller) {
     const flow = new BotkitConversation("simulation", controller);
     const nlu = require('../scripts/nlu.js');
     const banks = require('../scripts/banks.js');
-
+    var error = False
     flow.addAction("getCpf")
 
     flow.before("getCpf", async (flow, bot) => {
@@ -85,8 +85,11 @@ module.exports = function (controller) {
 
     flow.before("simulationChoice", async (flow, bot) => {
         console.log(flow)
-
-        var simulationResult = await banks.simulation(flow.vars.cpf)
+        var hasSim = false
+        if(! hasSim){
+            var simulationResult = await banks.simulation(flow.vars.cpf)
+            hasSim = true
+        }
         console.log(simulationResult)
         if (!simulationResult) {
             await bot.say({
@@ -98,13 +101,13 @@ module.exports = function (controller) {
                 }
             })
             await flow.setVar("error", true)
+            error = true
             await flow.gotoThread("error")
         }
         else {
             if (simulationResult.simulation[0].success) {
                 await bot.say({ "type": "message", "text": { "type": "info", "section": "simulation", "body": simulationResult } })
                 var netValue = Intl.NumberFormat('pt-br', { style: 'currency', currency: 'BRL' }).format(String(simulationResult.simulation[0].netValue))
-
                 flow.setVar("netValue", netValue);
                 flow.setVar("interest", simulationResult.simulation[0].interest);
                 flow.setVar("installmentsCount", simulationResult.simulation[0].installments.length);
@@ -119,6 +122,7 @@ module.exports = function (controller) {
                     }
                 })
                 await flow.setVar("error", true)
+                error = true
                 await flow.gotoThread("error")
             }
         }
@@ -178,8 +182,8 @@ module.exports = function (controller) {
 
     flow.after(async (flow, bot) => {
         await bot.cancelAllDialogs();
-        console.log(flow.vars.error)
-        if (flow.vars.error) {
+        console.log(flow)
+        if (error ) {
 
             await bot.beginDialog("simulationError");
         }
