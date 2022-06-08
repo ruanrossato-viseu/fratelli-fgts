@@ -18,7 +18,7 @@ module.exports.simulation = async function simulation(cpf){
 
     var config = {
         method: 'post',
-        url: 'https://tr5bceh9i1.execute-api.sa-east-1.amazonaws.com/DEV/simulation',
+        url: 'https://tr5bceh9i1.execute-api.sa-east-1.amazonaws.com/PRD/simulation',
         headers: { 
             'x-api-key': '8HOhYvOk8z8AoMoPU6o0krG8IUKeVf38IvoHnTkb', 
             'Content-Type': 'application/json'
