@@ -119,7 +119,7 @@ module.exports = function (controller) {
                     }
                 })
                 console.log("1")
-                await flow.stop()
+                // await flow.stop()
                 console.log("2")
                 await bot.beginDialog("simulationError");
                 console.log("3")
