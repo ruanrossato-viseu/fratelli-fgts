@@ -6,7 +6,6 @@ module.exports = function (controller) {
     const flow = new BotkitConversation("simulation", controller);
     const nlu = require('../scripts/nlu.js');
     const banks = require('../scripts/banks.js');
-    var error = false
     flow.addAction("getCpf")
 
     flow.before("getCpf", async (flow, bot) => {
@@ -84,13 +83,11 @@ module.exports = function (controller) {
     flow.addAction("simulationChoice", "preSimulation");
 
     flow.before("simulationChoice", async (flow, bot) => {
-        console.log(flow)
-        var hasSim = false
-        if(! hasSim){
-            var simulationResult = await banks.simulation(flow.vars.cpf)
-            hasSim = true
-        }
+
+        var simulationResult = await banks.simulation(flow.vars.cpf)
+
         console.log(simulationResult)
+        
         if (!simulationResult) {
             await bot.say({
                 "type": "message",
@@ -101,7 +98,6 @@ module.exports = function (controller) {
                 }
             })
             await flow.setVar("error", true)
-            error = true
             await flow.gotoThread("error")
         }
         else {
@@ -122,7 +118,6 @@ module.exports = function (controller) {
                     }
                 })
                 await flow.setVar("error", true)
-                error = true
                 await flow.gotoThread("error")
             }
         }
@@ -180,10 +175,10 @@ module.exports = function (controller) {
         },
         "error");
 
-    flow.after(async (flow, bot) => {
+    flow.after(async (vars, bot) => {
         await bot.cancelAllDialogs();
         console.log(flow)
-        if (error ) {
+        if (vars.error ) {
 
             await bot.beginDialog("simulationError");
         }
