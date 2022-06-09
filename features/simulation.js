@@ -152,6 +152,40 @@ module.exports = function (controller) {
                 await bot.beginDialog("signUp");
             }
             else {
+                
+                await flow.gotoThread("simulationEnding")
+                
+            }
+
+        },
+        "simulationChoice",
+        "simulationChoice")
+
+    flow.addQuestion({
+        "type": "buttons",
+        "section": "fgtsSimulation",
+        "body": "Você quer falar com um especialista?",
+        "footer": "Clique na opção desejada",
+        
+
+        "buttons": [
+            {
+                "text": "Quero ajuda",
+                "payload": "sim"
+            },
+            {
+                "text": "Agora não",
+                "payload": "nao"
+            }
+        ]
+    },
+
+        async (response, flow, bot) => {
+            if (response == "sim") {
+                await bot.cancelAllDialogs();
+                await bot.beginDialog("app-install");
+            }
+            else {
                 await bot.say({
                     "type": "message",
                     "text": {
@@ -161,11 +195,13 @@ module.exports = function (controller) {
                     }
                 }
                 );
+                
             }
 
         },
-        "simulationChoice",
-        "simulationChoice")
+        "simulationEnding",
+        "simulationEnding");
+
 
     flow.addMessage(
         {
