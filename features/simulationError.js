@@ -25,6 +25,10 @@ module.exports = function(controller) {
                 {
                     "text": "Tentar novamente",
                     "payload": "tentar_novamente"
+                },
+                {
+                    "text": "Falar com especialista",
+                    "payload": "especialista"
                 }
             ],
 
