@@ -27,10 +27,10 @@ module.exports = function(controller) {
                     "payload": "tentar_novamente"
                 },
                 {
-                    "text": "Falar com especialista",
-                    "payload": "especialista"
+                    "text": "Preciso de ajuda",
+                    "payload": "ajuda"
                 }
-            ],
+            ]
 
         },
         async(response,flow,bot) => {
