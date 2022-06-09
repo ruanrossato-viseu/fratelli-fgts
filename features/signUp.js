@@ -830,7 +830,7 @@ module.exports = function(controller) {
       "type":"message",
 "section":"Subscription",
       "body":"Pronto! Sua requisição foi enviada com sucesso!\
-      \n\nPara concluir a formalização e enviar os documentos, é só entrar nesse site do banco: www.linkbanco.com.br", 
+      \n\nIremos entrar em contato com você para concluir a formalização quando o banco autorizar", 
       // "footer":"",
       // "header":"",
 
