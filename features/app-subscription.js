@@ -57,6 +57,12 @@ module.exports = function (controller) {
         ]
     },
         async (response, flow, bot) => {
+            if (nlu.checkAffirmative(response)) {
+                // await flow.gotoThread("subscriptionFgts")
+            }
+            else {
+                await flow.gotoThread("subscriptionAgain")
+            }
 
         },
         "inscricaoSaqueAniversario",
