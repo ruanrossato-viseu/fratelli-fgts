@@ -8,8 +8,8 @@ module.exports = function(controller) {
     flow.addMessage(
         {
             "type":"message",
-"section":"Subscription",
-            "body":"Um de nossos especialistas irá lhe ajudar em alguns instantes. É só esperar um pouquinho",
+            "section":"Subscription",
+            "body":"Para falar com um de nossos atendentes, é só clicar no link e falar nesse whatsapp: https://wa.me/5511946204724",
             // "footer":"",
             // "header":"",
       
