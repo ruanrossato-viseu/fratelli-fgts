@@ -94,7 +94,7 @@ module.exports = function (controller) {
                 "text": {
                     "type": "message",
                     "section": "fgtsSimulation",
-                    "body": "Não foi possível fazer a simulação agora"
+                    "body": "Não foi possível fazer a simulação agora."
                 }
             })
             await flow.setVar("error", true)
