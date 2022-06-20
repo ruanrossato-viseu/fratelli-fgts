@@ -25,7 +25,7 @@ module.exports = function (controller) {
         {
             "type": "message",
             "section": "fgtsSimulation",
-            "body": "Para fazer sua simulação, só preciso que escreva o seu *CPF*, por favor"
+            "body": "Para fazer sua simulação, só preciso que escreva o seu *CPF*, por favor."
         },
         async (response, flow, bot) => {
             var cpf = response

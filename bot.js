@@ -39,6 +39,10 @@ controller.ready(() => {
     // load traditional developer-created local custom feature modules
     controller.loadModules(__dirname + '/features');
 
+    controller.interrupts("INSSATIVO", "message", async (bot, message) => {
+        await bot.beginDialog("inss");
+    })
+
     controller.interrupts("PARAR", "message", async (bot, message) => {
         await bot.say({
             "type": "message",
